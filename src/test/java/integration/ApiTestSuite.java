@@ -9,7 +9,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         IT_RegistrationApi.class,
-        IT_LoginApi.class
+        IT_LoginApi.class,
+        IT_UsersApi.class
 })
 public class ApiTestSuite {
 
