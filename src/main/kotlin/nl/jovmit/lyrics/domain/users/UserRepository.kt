@@ -2,11 +2,13 @@ package nl.jovmit.lyrics.domain.users
 
 class UserRepository {
 
+    private val users = mutableListOf<User>()
+
     fun add(user: User) {
-        TODO("not implemented")
+        users.add(user)
     }
 
     fun isUsernameTaken(username: String): Boolean {
-        TODO("not implemented")
+        return users.any { it.username == username }
     }
 }
