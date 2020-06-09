@@ -20,15 +20,6 @@ import java.util.*
 @ExtendWith(MockitoExtension::class)
 class UsersApiShould {
 
-    companion object {
-        private val USER_ID = UUID.randomUUID().toString()
-        private const val USERNAME = "Tom"
-        private const val PASSWORD = "alksjd12ealksjd"
-        private const val ABOUT = "About Tom"
-        private val USER_DATA = UserData(USERNAME, PASSWORD, ABOUT)
-        private val USER = User(USER_ID, USERNAME, PASSWORD, ABOUT)
-    }
-
     @Mock
     private lateinit var response: Response
 
@@ -37,6 +28,13 @@ class UsersApiShould {
 
     @Mock
     private lateinit var userService: UserService
+
+    private val userId = UUID.randomUUID().toString()
+    private val username = "Tom"
+    private val password = "alksjd12ealksjd"
+    private val about = "About Tom"
+    private val userData = UserData(username, password, about)
+    private val user = User(userId, username, password, about)
 
     private lateinit var usersApi: UsersApi
 
@@ -47,30 +45,30 @@ class UsersApiShould {
 
     @Test
     fun create_a_user() {
-        given(userService.createUser(USER_DATA)).willReturn(USER)
-        given(request.body()).willReturn(jsonContaining(USER_DATA))
+        given(userService.createUser(userData)).willReturn(user)
+        given(request.body()).willReturn(jsonContaining(userData))
 
         usersApi.createUser(request, response)
 
-        verify(userService).createUser(USER_DATA)
+        verify(userService).createUser(userData)
     }
 
     @Test
     fun return_json_containing_newly_created_user() {
-        given(request.body()).willReturn(jsonContaining(USER_DATA))
-        given(userService.createUser(USER_DATA)).willReturn(USER)
+        given(request.body()).willReturn(jsonContaining(userData))
+        given(userService.createUser(userData)).willReturn(user)
 
         val result = usersApi.createUser(request, response)
 
         verify(response).status(201)
         verify(response).type("application/json")
-        assertThat(jsonContaining(USER)).isEqualTo(result)
+        assertThat(jsonContaining(user)).isEqualTo(result)
     }
 
     @Test
     fun return_error_when_creating_a_duplicate_user() {
-        given(request.body()).willReturn(jsonContaining(USER_DATA))
-        given(userService.createUser(USER_DATA)).willThrow(UsernameAlreadyInUseException::class.java)
+        given(request.body()).willReturn(jsonContaining(userData))
+        given(userService.createUser(userData)).willThrow(UsernameAlreadyInUseException::class.java)
 
         val result = usersApi.createUser(request, response)
 
