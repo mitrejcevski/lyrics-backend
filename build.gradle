@@ -25,6 +25,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-junit-jupiter:2.23.0'
     testImplementation 'io.rest-assured:rest-assured:4.3.0'
     testImplementation 'io.rest-assured:kotlin-extensions:4.3.0'
+    testImplementation 'org.assertj:assertj-core:2.9.1'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
