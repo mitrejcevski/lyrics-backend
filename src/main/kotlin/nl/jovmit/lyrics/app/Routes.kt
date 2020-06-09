@@ -24,7 +24,7 @@ class Routes {
 
         val userRepository = UserRepository()
         val userService = UserService(idGenerator, userRepository)
-        val loginService = LoginService()
+        val loginService = LoginService(userRepository)
 
         usersApi = UsersApi(userService)
         loginApi = LoginApi(loginService)

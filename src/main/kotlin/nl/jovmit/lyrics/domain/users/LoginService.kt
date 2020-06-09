@@ -1,8 +1,14 @@
 package nl.jovmit.lyrics.domain.users
 
-class LoginService {
+class LoginService(
+    private val userRepository: UserRepository
+) {
 
     fun login(userCredentials: UserCredentials): User {
-        TODO("not implemented")
+        val user = userRepository.userFor(userCredentials)
+        if (user.isPresent) {
+            return user.get()
+        }
+        throw InvalidUserCredentialsException()
     }
 }
