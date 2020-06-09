@@ -18,7 +18,7 @@ class LyricsApp {
     private val routes = Routes()
 
     fun start() {
-        port(4321)
+        port(8080)
         enableCORS()
         setLog()
         routes.create()
