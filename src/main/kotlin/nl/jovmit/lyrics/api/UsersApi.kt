@@ -1,10 +1,10 @@
 package nl.jovmit.lyrics.api
 
 import com.eclipsesource.json.JsonObject
-import nl.jovmit.lyrics.domain.users.User
 import nl.jovmit.lyrics.domain.users.UserData
 import nl.jovmit.lyrics.domain.users.UserService
 import nl.jovmit.lyrics.domain.users.UsernameAlreadyInUseException
+import nl.jovmit.lyrics.infrastructure.json.UserJson.jsonFor
 import org.eclipse.jetty.http.HttpStatus.BAD_REQUEST_400
 import org.eclipse.jetty.http.HttpStatus.CREATED_201
 import spark.Request
@@ -16,23 +16,15 @@ class UsersApi(
 
     fun createUser(request: Request, response: Response): String {
         val userData = userDataFrom(request)
-        try {
+        return try {
             val user = userService.createUser(userData)
             response.status(CREATED_201)
             response.type("application/json")
-            return jsonFor(user)
+            jsonFor(user)
         } catch (exception: UsernameAlreadyInUseException) {
             response.status(BAD_REQUEST_400)
-            return "Username already in use."
+            "Username already in use."
         }
-    }
-
-    private fun jsonFor(user: User): String {
-        return JsonObject()
-            .add("id", user.id)
-            .add("username", user.username)
-            .add("about", user.about)
-            .toString()
     }
 
     private fun userDataFrom(request: Request): UserData {
