@@ -1,7 +1,9 @@
 package nl.jovmit.lyrics.app
 
 import nl.jovmit.lyrics.api.UsersApi
+import nl.jovmit.lyrics.domain.users.UserRepository
 import nl.jovmit.lyrics.domain.users.UserService
+import nl.jovmit.lyrics.infrastructure.utils.IdGenerator
 import spark.Spark.get
 import spark.Spark.post
 
@@ -15,7 +17,11 @@ class Routes {
     }
 
     private fun createApis() {
-        val userService = UserService()
+        val idGenerator = IdGenerator()
+
+        val userRepository = UserRepository()
+        val userService = UserService(idGenerator, userRepository)
+
         usersApi = UsersApi(userService)
     }
 
