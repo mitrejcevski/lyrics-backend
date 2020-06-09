@@ -15,6 +15,7 @@ class UserRepository {
     }
 
     fun userFor(userCredentials: UserCredentials): Optional<User> {
-        TODO("not implemented")
+        val user = users.firstOrNull { it.matchesCredentials(userCredentials) }
+        return if (user != null) Optional.of(user) else Optional.empty()
     }
 }

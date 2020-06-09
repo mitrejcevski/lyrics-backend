@@ -5,4 +5,11 @@ data class User(
     val username: String,
     val password: String,
     val about: String
-)
+) {
+    fun matchesCredentials(
+        credentials: UserCredentials
+    ): Boolean {
+        return username == credentials.username
+                && password == credentials.password
+    }
+}

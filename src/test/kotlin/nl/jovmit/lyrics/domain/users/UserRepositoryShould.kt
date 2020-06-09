@@ -8,6 +8,9 @@ class UserRepositoryShould {
 
     private val mile = aUser().withUsername("mile").build()
     private val tom = aUser().withUsername("tom").build()
+    private val tomCredentials = UserCredentials(tom.username, tom.password)
+    private val incorrectMileCredentials = UserCredentials(mile.username, "wrong")
+    private val unknownCredentials = UserCredentials("unknown", "unknown")
 
     private val repository = UserRepository()
 
@@ -17,5 +20,15 @@ class UserRepositoryShould {
 
         assertThat(repository.isUsernameTaken(tom.username)).isTrue()
         assertThat(repository.isUsernameTaken(mile.username)).isFalse()
+    }
+
+    @Test
+    fun return_user_matching_valid_credentials() {
+        repository.add(tom)
+        repository.add(mile)
+
+        assertThat(repository.userFor(tomCredentials)).isPresent()
+        assertThat(repository.userFor(unknownCredentials)).isEmpty()
+        assertThat(repository.userFor(incorrectMileCredentials)).isEmpty()
     }
 }
