@@ -38,14 +38,13 @@ class SongsApiShould {
     @BeforeEach
     fun setUp() {
         songsApi = SongsApi(songsService)
+        given(request.params("userId")).willReturn(userId)
+        given(request.body()).willReturn(jsonContaining(songData))
+        given(songsService.createSong(userId, songData)).willReturn(song)
     }
 
     @Test
     fun create_a_song() {
-        given(request.params("userId")).willReturn(userId)
-        given(request.body()).willReturn(jsonContaining(songData))
-        given(songsService.createSong(userId, songData)).willReturn(song)
-
         songsApi.createSong(request, response)
 
         verify(songsService).createSong(userId, songData)
@@ -53,10 +52,6 @@ class SongsApiShould {
 
     @Test
     fun return_json_containing_created_song() {
-        given(request.params("userId")).willReturn(userId)
-        given(request.body()).willReturn(jsonContaining(songData))
-        given(songsService.createSong(userId, songData)).willReturn(song)
-
         val result = songsApi.createSong(request, response)
 
         verify(response).status(201)
