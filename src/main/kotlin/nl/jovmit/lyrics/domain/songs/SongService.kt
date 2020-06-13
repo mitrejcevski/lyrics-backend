@@ -13,4 +13,8 @@ class SongService(
         songRepository.add(song)
         return song
     }
+
+    fun songsFor(userId: String): List<Song> {
+        TODO("not implemented")
+    }
 }

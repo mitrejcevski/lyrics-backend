@@ -2,21 +2,33 @@ package nl.jovmit.lyrics.domain.songs
 
 import com.eclipsesource.json.JsonObject
 import nl.jovmit.lyrics.infrastructure.json.SongJson.jsonFor
-import org.eclipse.jetty.http.HttpStatus.CREATED_201
+import org.eclipse.jetty.http.HttpStatus.*
 import spark.Request
 import spark.Response
 
 class SongsApi(
-    private val songsService: SongService
+    private val songService: SongService
 ) {
 
     fun createSong(request: Request, response: Response): String {
         val userId = request.params("userId")
         val songData = songDataFrom(request)
-        val song = songsService.createSong(userId, songData)
+        val song = songService.createSong(userId, songData)
         response.status(CREATED_201)
         response.type("application/json")
         return jsonFor(song)
+
+    fun songsByUser(request: Request, response: Response): String {
+        val userId = request.params("userId")
+        return try {
+            val songs = songService.songsFor(userId)
+            response.status(OK_200)
+            response.type("application/json")
+            jsonFor(songs)
+        } catch (unknownUserException: UnknownUserException) {
+            response.status(BAD_REQUEST_400)
+            "The user does not exist."
+        }
     }
 
     private fun songDataFrom(request: Request): SongData {

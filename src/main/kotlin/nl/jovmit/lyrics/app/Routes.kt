@@ -42,5 +42,6 @@ class Routes {
         post("users") { request, response -> usersApi.createUser(request, response) }
         post("login") { request, response -> loginApi.login(request, response) }
         post("users/:userId/songs") { request, response -> songsApi.createSong(request, response) }
+        get("users/:userId/songs") { request, response -> songsApi.songsByUser(request, response) }
     }
 }
