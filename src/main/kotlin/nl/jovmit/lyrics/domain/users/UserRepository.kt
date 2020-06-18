@@ -18,4 +18,8 @@ class UserRepository {
         val user = users.firstOrNull { it.matchesCredentials(userCredentials) }
         return if (user != null) Optional.of(user) else Optional.empty()
     }
+
+    fun hasUserWithId(userId: String): Boolean {
+        TODO("not implemented")
+    }
 }

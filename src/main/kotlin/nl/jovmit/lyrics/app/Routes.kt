@@ -30,7 +30,7 @@ class Routes {
         val userService = UserService(idGenerator, userRepository)
         val loginService = LoginService(userRepository)
         val songRepository = SongRepository()
-        val songService = SongService(idGenerator, songRepository)
+        val songService = SongService(idGenerator, songRepository, userRepository)
 
         usersApi = UsersApi(userService)
         loginApi = LoginApi(loginService)
