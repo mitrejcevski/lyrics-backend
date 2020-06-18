@@ -18,7 +18,8 @@ class SongService(
     }
 
     fun songsFor(userId: String): List<Song> {
-        TODO("not implemented")
+        validate(userId)
+        return songRepository.songsFor(userId)
     }
 
     private fun validate(userId: String) {

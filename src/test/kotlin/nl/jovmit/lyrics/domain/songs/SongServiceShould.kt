@@ -31,17 +31,18 @@ class SongServiceShould {
     private val songId = UUID.randomUUID().toString()
     private val songData = SongDataBuilder.songData().build()
     private val song = aSong().withUserId(userId).withSongId(songId).build()
+    private val songs = listOf(song)
 
     private lateinit var songService: SongService
 
     @BeforeEach
     fun setUp() {
         songService = SongService(idGenerator, songRepository, userRepository)
+        given(userRepository.hasUserWithId(userId)).willReturn(true)
     }
 
     @Test
     fun create_new_song() {
-        given(userRepository.hasUserWithId(userId)).willReturn(true)
         given(idGenerator.next()).willReturn(songId)
 
         val result = songService.createSong(userId, songData)
@@ -56,6 +57,24 @@ class SongServiceShould {
 
         assertThrows<UnknownUserException> {
             songService.createSong(userId, songData)
+        }
+    }
+
+    @Test
+    fun return_songs_for_given_user_id() {
+        given(songRepository.songsFor(userId)).willReturn(songs)
+
+        val result = songService.songsFor(userId)
+
+        assertThat(result).containsExactly(song)
+    }
+
+    @Test
+    fun throw_exception_when_unknown_user_tries_to_load_songs() {
+        given(userRepository.hasUserWithId(userId)).willReturn(false)
+
+        assertThrows<UnknownUserException> {
+            songService.songsFor(userId)
         }
     }
 }
