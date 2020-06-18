@@ -20,6 +20,6 @@ class UserRepository {
     }
 
     fun hasUserWithId(userId: String): Boolean {
-        TODO("not implemented")
+        return users.any { it.id == userId }
     }
 }

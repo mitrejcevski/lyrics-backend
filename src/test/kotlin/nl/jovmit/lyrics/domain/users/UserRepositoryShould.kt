@@ -31,4 +31,12 @@ class UserRepositoryShould {
         assertThat(repository.userFor(unknownCredentials)).isEmpty()
         assertThat(repository.userFor(incorrectMileCredentials)).isEmpty()
     }
+
+    @Test
+    fun inform_when_contains_user_for_given_user_id() {
+        repository.add(tom)
+
+        assertThat(repository.hasUserWithId(tom.id)).isTrue()
+        assertThat(repository.hasUserWithId(mile.id)).isFalse()
+    }
 }
