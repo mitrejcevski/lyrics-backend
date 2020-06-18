@@ -66,6 +66,17 @@ class SongsApiShould {
     }
 
     @Test
+    fun return_error_when_unknown_user_creates_new_song() {
+        given(request.body()).willReturn(jsonContaining(songData))
+        given(songsService.createSong(userId, songData)).willThrow(UnknownUserException::class.java)
+
+        val result = songsApi.createSong(request, response)
+
+        verify(response).status(400)
+        assertThat(result).isEqualTo("The user does not exist.")
+    }
+
+    @Test
     fun return_json_containing_songs_for_a_given_user() {
         given(request.params("userId")).willReturn(userId)
         given(songsService.songsFor(userId)).willReturn(songs)

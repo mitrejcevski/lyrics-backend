@@ -12,11 +12,17 @@ class SongsApi(
 
     fun createSong(request: Request, response: Response): String {
         val userId = request.params("userId")
-        val songData = songDataFrom(request)
-        val song = songService.createSong(userId, songData)
-        response.status(CREATED_201)
-        response.type("application/json")
-        return jsonFor(song)
+        return try {
+            val songData = songDataFrom(request)
+            val song = songService.createSong(userId, songData)
+            response.status(CREATED_201)
+            response.type("application/json")
+            jsonFor(song)
+        } catch (unknownUserException: UnknownUserException) {
+            response.status(BAD_REQUEST_400)
+            "The user does not exist."
+        }
+    }
 
     fun songsByUser(request: Request, response: Response): String {
         val userId = request.params("userId")
