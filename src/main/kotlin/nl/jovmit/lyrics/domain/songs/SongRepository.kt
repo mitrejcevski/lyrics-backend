@@ -2,11 +2,13 @@ package nl.jovmit.lyrics.domain.songs
 
 class SongRepository {
 
-    fun add(song: Song) {
+    private val songs = mutableListOf<Song>()
 
+    fun add(song: Song) {
+        songs.add(song)
     }
 
     fun songsFor(userId: String): List<Song> {
-        TODO("not implemented")
+        return songs.filter { it.userId == userId }
     }
 }
