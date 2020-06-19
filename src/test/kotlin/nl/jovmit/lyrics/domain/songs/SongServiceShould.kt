@@ -3,7 +3,7 @@ package nl.jovmit.lyrics.domain.songs
 import nl.jovmit.lyrics.domain.users.UnknownUserException
 import nl.jovmit.lyrics.domain.users.UserRepository
 import nl.jovmit.lyrics.infrastructure.builder.SongBuilder.Companion.aSong
-import nl.jovmit.lyrics.infrastructure.builder.SongDataBuilder
+import nl.jovmit.lyrics.infrastructure.builder.SongDataBuilder.Companion.songData
 import nl.jovmit.lyrics.infrastructure.utils.IdGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -30,8 +30,10 @@ class SongServiceShould {
 
     private val userId = UUID.randomUUID().toString()
     private val songId = UUID.randomUUID().toString()
-    private val songData = SongDataBuilder.songData().build()
+    private val songData = songData().build()
+    private val updatedSongData = songData().withTitle("new").withPerformer("new").withLyrics("new").build()
     private val song = aSong().withUserId(userId).withSongId(songId).build()
+    private val updatedSong = aSong().withUserId(userId).withSongId(songId).withSongData(updatedSongData).build()
     private val songs = listOf(song)
 
     private lateinit var songService: SongService
@@ -76,6 +78,34 @@ class SongServiceShould {
 
         assertThrows<UnknownUserException> {
             songService.songsFor(userId)
+        }
+    }
+
+    @Test
+    fun edit_a_song() {
+        given(songRepository.getSong(userId, songId)).willReturn(Optional.of(song))
+
+        val result = songService.editSong(userId, songId, updatedSongData)
+
+        verify(songRepository).update(updatedSong)
+        assertThat(result).isEqualTo(updatedSong)
+    }
+
+    @Test
+    fun throw_exception_when_unknown_user_tries_to_update_a_song() {
+        given(userRepository.hasUserWithId(userId)).willReturn(false)
+
+        assertThrows<UnknownUserException> {
+            songService.editSong(userId, songId, updatedSongData)
+        }
+    }
+
+    @Test
+    fun throw_exception_when_attempting_to_update_an_unknown_song() {
+        given(songRepository.getSong(userId, songId)).willReturn(Optional.empty())
+
+        assertThrows<UnknownSongException> {
+            songService.editSong(userId, songId, updatedSongData)
         }
     }
 }

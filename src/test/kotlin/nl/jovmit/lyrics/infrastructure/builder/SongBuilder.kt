@@ -1,6 +1,7 @@
 package nl.jovmit.lyrics.infrastructure.builder
 
 import nl.jovmit.lyrics.domain.songs.Song
+import nl.jovmit.lyrics.domain.songs.SongData
 import java.util.*
 
 class SongBuilder {
@@ -39,6 +40,13 @@ class SongBuilder {
 
     fun withLyrics(lyrics: String): SongBuilder {
         this.lyrics = lyrics
+        return this
+    }
+
+    fun withSongData(songData: SongData): SongBuilder {
+        this.title = songData.title
+        this.performer = songData.performer
+        this.lyrics = songData.lyrics
         return this
     }
 
