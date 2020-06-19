@@ -15,10 +15,17 @@ class SongRepository {
     }
 
     fun getSong(userId: String, songId: String): Optional<Song> {
-        TODO("not implemented")
+        val matchingSong = songs.firstOrNull { it.matchesIds(userId, songId) }
+        if (matchingSong != null) {
+            return Optional.of(matchingSong)
+        }
+        return Optional.empty()
     }
 
     fun update(updatedSong: Song) {
-        TODO("not implemented")
+        val index = songs.indexOfFirst { it.matchesIds(updatedSong.userId, updatedSong.songId) }
+        if (index != -1) {
+            songs[index] = updatedSong
+        }
     }
 }

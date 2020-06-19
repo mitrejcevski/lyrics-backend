@@ -6,4 +6,9 @@ data class Song(
     val title: String,
     val performer: String,
     val lyrics: String
-)
+) {
+
+    fun matchesIds(userId: String, songId: String): Boolean {
+        return this.userId == userId && this.songId == songId
+    }
+}
