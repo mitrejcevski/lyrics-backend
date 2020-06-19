@@ -41,12 +41,47 @@ class SongsApi(
         val songId = request.params("songId")
         val songData = songDataFrom(request)
         return try {
-            prepareOkResponse(userId, songId, songData, response)
+            prepareSongUpdatedResponse(userId, songId, songData, response)
         } catch (unknownSongException: UnknownSongException) {
             prepareUnknownSongError(response)
         } catch (unknownUserException: UnknownUserException) {
             prepareUnknownUserError(response)
         }
+    }
+
+    fun deleteSong(request: Request, response: Response): String {
+        val userId = request.params("userId")
+        val songId = request.params("songId")
+        return try {
+            prepareSongDeletedResponse(userId, songId, response)
+        } catch (unknownSongException: UnknownSongException) {
+            prepareUnknownSongError(response)
+        } catch (unknownUserException: UnknownUserException) {
+            prepareUnknownUserError(response)
+        }
+    }
+
+    private fun prepareSongDeletedResponse(
+        userId: String,
+        songId: String,
+        response: Response
+    ): String {
+        val deletedSongId = songService.deleteSong(userId, songId)
+        response.status(ACCEPTED_202)
+        response.type("application/json")
+        return jsonFor(deletedSongId)
+    }
+
+    private fun prepareSongUpdatedResponse(
+        userId: String,
+        songId: String,
+        songData: SongData,
+        response: Response
+    ): String {
+        val song = songService.editSong(userId, songId, songData)
+        response.status(ACCEPTED_202)
+        response.type("application/json")
+        return jsonFor(song)
     }
 
     private fun prepareUnknownSongError(response: Response): String {
@@ -57,18 +92,6 @@ class SongsApi(
     private fun prepareUnknownUserError(response: Response): String {
         response.status(BAD_REQUEST_400)
         return "The user does not exist."
-    }
-
-    private fun prepareOkResponse(
-        userId: String,
-        songId: String,
-        songData: SongData,
-        response: Response
-    ): String {
-        val song = songService.editSong(userId, songId, songData)
-        response.status(ACCEPTED_202)
-        response.type("application/json")
-        return jsonFor(song)
     }
 
     private fun songDataFrom(request: Request): SongData {

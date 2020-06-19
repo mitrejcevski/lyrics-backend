@@ -43,5 +43,6 @@ class Routes {
         post("users/:userId/songs") { request, response -> songsApi.createSong(request, response) }
         get("users/:userId/songs") { request, response -> songsApi.songsByUser(request, response) }
         put("users/:userId/songs/:songId") { request, response -> songsApi.editSong(request, response) }
+        delete("users/:userId/songs/:songId") { request, response -> songsApi.deleteSong(request, response) }
     }
 }

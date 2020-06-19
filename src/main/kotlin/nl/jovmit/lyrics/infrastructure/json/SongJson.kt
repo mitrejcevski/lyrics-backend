@@ -16,6 +16,12 @@ object SongJson {
         return jsonArray.toString()
     }
 
+    fun jsonFor(deletedSongId: String): String {
+        return JsonObject()
+            .add("songId", deletedSongId)
+            .toString()
+    }
+
     private fun jsonObjectFor(song: Song): JsonObject? {
         return JsonObject()
             .add("userId", song.userId)

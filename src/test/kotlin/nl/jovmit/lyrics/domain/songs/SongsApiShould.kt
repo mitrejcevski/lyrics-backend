@@ -155,6 +155,60 @@ class SongsApiShould {
         assertThat(result).isEqualTo("The user does not exist.")
     }
 
+    @Test
+    fun delete_a_song() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(songsService.deleteSong(userId, songId)).willReturn(songId)
+
+        songsApi.deleteSong(request, response)
+
+        verify(songsService).deleteSong(userId, songId)
+    }
+
+    @Test
+    fun return_json_containing_deleted_song() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(songsService.deleteSong(userId, songId)).willReturn(songId)
+
+        val result = songsApi.deleteSong(request, response)
+
+        verify(response).status(202)
+        verify(response).type("application/json")
+        assertThat(result).isEqualTo(jsonContaining(song.songId))
+    }
+
+    @Test
+    fun return_error_when_attempting_to_delete_an_unknown_song() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(songsService.deleteSong(userId, songId)).willThrow(UnknownSongException::class.java)
+
+        val result = songsApi.deleteSong(request, response)
+
+        verify(response).status(400)
+        assertThat(result).isEqualTo("The song does not exist.")
+    }
+
+    @Test
+    fun return_error_when_attempting_to_delete_a_song_with_unknown_user() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(songsService.deleteSong(userId, songId)).willThrow(UnknownUserException::class.java)
+
+        val result = songsApi.deleteSong(request, response)
+
+        verify(response).status(400)
+        assertThat(result).isEqualTo("The user does not exist.")
+    }
+
+    private fun jsonContaining(songId: String): String {
+        return JsonObject()
+            .add("songId", songId)
+            .toString()
+    }
+
     private fun jsonContaining(songs: List<Song>): String {
         val jsonArray = JsonArray()
         songs.forEach { jsonArray.add(jsonObjectFor(it)) }

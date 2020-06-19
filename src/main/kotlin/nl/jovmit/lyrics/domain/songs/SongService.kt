@@ -40,4 +40,8 @@ class SongService(
             throw UnknownUserException()
         }
     }
+
+    fun deleteSong(userId: String, songId: String): String {
+        TODO("not implemented")
+    }
 }
