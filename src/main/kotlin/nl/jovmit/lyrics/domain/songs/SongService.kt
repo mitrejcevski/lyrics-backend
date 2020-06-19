@@ -1,5 +1,6 @@
 package nl.jovmit.lyrics.domain.songs
 
+import nl.jovmit.lyrics.domain.users.UnknownUserException
 import nl.jovmit.lyrics.domain.users.UserRepository
 import nl.jovmit.lyrics.infrastructure.utils.IdGenerator
 
@@ -26,5 +27,9 @@ class SongService(
         if (!userRepository.hasUserWithId(userId)) {
             throw UnknownUserException()
         }
+    }
+
+    fun editSong(userId: String, songId: String, songData: SongData): Song {
+        TODO("not implemented")
     }
 }

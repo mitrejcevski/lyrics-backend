@@ -1,5 +1,6 @@
 package nl.jovmit.lyrics.domain.songs
 
+import nl.jovmit.lyrics.domain.users.UnknownUserException
 import nl.jovmit.lyrics.domain.users.UserRepository
 import nl.jovmit.lyrics.infrastructure.builder.SongBuilder.Companion.aSong
 import nl.jovmit.lyrics.infrastructure.builder.SongDataBuilder

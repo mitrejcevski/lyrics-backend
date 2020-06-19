@@ -9,8 +9,7 @@ import nl.jovmit.lyrics.domain.users.LoginService
 import nl.jovmit.lyrics.domain.users.UserRepository
 import nl.jovmit.lyrics.domain.users.UserService
 import nl.jovmit.lyrics.infrastructure.utils.IdGenerator
-import spark.Spark.get
-import spark.Spark.post
+import spark.Spark.*
 
 class Routes {
 
@@ -43,5 +42,6 @@ class Routes {
         post("login") { request, response -> loginApi.login(request, response) }
         post("users/:userId/songs") { request, response -> songsApi.createSong(request, response) }
         get("users/:userId/songs") { request, response -> songsApi.songsByUser(request, response) }
+        put("users/:userId/songs/:songId") { request, response -> songsApi.editSong(request, response) }
     }
 }

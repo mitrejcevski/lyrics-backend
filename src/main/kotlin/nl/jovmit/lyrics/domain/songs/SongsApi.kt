@@ -1,6 +1,7 @@
 package nl.jovmit.lyrics.domain.songs
 
 import com.eclipsesource.json.JsonObject
+import nl.jovmit.lyrics.domain.users.UnknownUserException
 import nl.jovmit.lyrics.infrastructure.json.SongJson.jsonFor
 import org.eclipse.jetty.http.HttpStatus.*
 import spark.Request
@@ -19,8 +20,7 @@ class SongsApi(
             response.type("application/json")
             jsonFor(song)
         } catch (unknownUserException: UnknownUserException) {
-            response.status(BAD_REQUEST_400)
-            "The user does not exist."
+            prepareUnknownUserError(response)
         }
     }
 
@@ -32,9 +32,43 @@ class SongsApi(
             response.type("application/json")
             jsonFor(songs)
         } catch (unknownUserException: UnknownUserException) {
-            response.status(BAD_REQUEST_400)
-            "The user does not exist."
+            prepareUnknownUserError(response)
         }
+    }
+
+    fun editSong(request: Request, response: Response): String {
+        val userId = request.params("userId")
+        val songId = request.params("songId")
+        val songData = songDataFrom(request)
+        return try {
+            prepareOkResponse(userId, songId, songData, response)
+        } catch (unknownSongException: UnknownSongException) {
+            prepareUnknownSongError(response)
+        } catch (unknownUserException: UnknownUserException) {
+            prepareUnknownUserError(response)
+        }
+    }
+
+    private fun prepareUnknownSongError(response: Response): String {
+        response.status(BAD_REQUEST_400)
+        return "The song does not exist."
+    }
+
+    private fun prepareUnknownUserError(response: Response): String {
+        response.status(BAD_REQUEST_400)
+        return "The user does not exist."
+    }
+
+    private fun prepareOkResponse(
+        userId: String,
+        songId: String,
+        songData: SongData,
+        response: Response
+    ): String {
+        val song = songService.editSong(userId, songId, songData)
+        response.status(ACCEPTED_202)
+        response.type("application/json")
+        return jsonFor(song)
     }
 
     private fun songDataFrom(request: Request): SongData {

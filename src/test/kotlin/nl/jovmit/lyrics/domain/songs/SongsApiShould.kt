@@ -2,11 +2,13 @@ package nl.jovmit.lyrics.domain.songs
 
 import com.eclipsesource.json.JsonArray
 import com.eclipsesource.json.JsonObject
+import nl.jovmit.lyrics.domain.users.UnknownUserException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.willReturn
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
@@ -40,11 +42,11 @@ class SongsApiShould {
     @BeforeEach
     fun setUp() {
         songsApi = SongsApi(songsService)
-        given(request.params("userId")).willReturn(userId)
     }
 
     @Test
     fun create_a_song() {
+        given(request.params("userId")).willReturn(userId)
         given(request.body()).willReturn(jsonContaining(songData))
         given(songsService.createSong(userId, songData)).willReturn(song)
 
@@ -55,6 +57,7 @@ class SongsApiShould {
 
     @Test
     fun return_json_containing_created_song() {
+        given(request.params("userId")).willReturn(userId)
         given(request.body()).willReturn(jsonContaining(songData))
         given(songsService.createSong(userId, songData)).willReturn(song)
 
@@ -67,6 +70,7 @@ class SongsApiShould {
 
     @Test
     fun return_error_when_unknown_user_creates_new_song() {
+        given(request.params("userId")).willReturn(userId)
         given(request.body()).willReturn(jsonContaining(songData))
         given(songsService.createSong(userId, songData)).willThrow(UnknownUserException::class.java)
 
@@ -94,6 +98,58 @@ class SongsApiShould {
         given(songsService.songsFor(userId)).willThrow(UnknownUserException::class.java)
 
         val result = songsApi.songsByUser(request, response)
+
+        verify(response).status(400)
+        assertThat(result).isEqualTo("The user does not exist.")
+    }
+
+    @Test
+    fun edit_a_song() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(request.body()).willReturn(jsonContaining(songData))
+        given(songsService.editSong(userId, songId, songData)).willReturn(song)
+
+        songsApi.editSong(request, response)
+
+        verify(songsService).editSong(userId, songId, songData)
+    }
+
+    @Test
+    fun return_json_containing_edited_song() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(request.body()).willReturn(jsonContaining(songData))
+        given(songsService.editSong(userId, songId, songData)).willReturn(song)
+
+        val result = songsApi.editSong(request, response)
+
+        verify(response).status(202)
+        verify(response).type("application/json")
+        assertThat(result).isEqualTo(jsonContaining(song))
+    }
+
+    @Test
+    fun return_error_when_attempting_to_edit_an_unknown_song() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(request.body()).willReturn(jsonContaining(songData))
+        given(songsService.editSong(userId, songId, songData)).willThrow(UnknownSongException::class.java)
+
+        val result = songsApi.editSong(request, response)
+
+        verify(response).status(400)
+        assertThat(result).isEqualTo("The song does not exist.")
+    }
+
+    @Test
+    fun return_error_when_attempting_to_edit_a_song_with_unknown_user() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(request.body()).willReturn(jsonContaining(songData))
+        given(songsService.editSong(userId, songId, songData)).willThrow(UnknownUserException::class.java)
+
+        val result = songsApi.editSong(request, response)
 
         verify(response).status(400)
         assertThat(result).isEqualTo("The user does not exist.")
