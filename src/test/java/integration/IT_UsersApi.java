@@ -66,6 +66,17 @@ public class IT_UsersApi {
     }
 
     @Test
+    public void delete_song() {
+        String songId = createSong(USER_ID, YEAH_BY_USHER);
+        given()
+                .delete(BASE_URL + "/users/" + USER_ID + "/songs/" + songId)
+        .then()
+                .statusCode(202)
+                .contentType("application/json")
+                .body("songId", is(songId));
+    }
+
+    @Test
     public void return_songs_for_user() {
         given()
                 .body(withJsonContainingSongData(BEAUTIFUL_BY_AKON))
