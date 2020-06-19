@@ -35,13 +35,19 @@ class SongService(
         throw UnknownSongException()
     }
 
+    fun deleteSong(userId: String, songId: String): String {
+        validate(userId)
+        val song = songRepository.getSong(userId, songId)
+        if (song.isPresent) {
+            songRepository.delete(song.get())
+            return song.get().songId
+        }
+        throw UnknownSongException()
+    }
+
     private fun validate(userId: String) {
         if (!userRepository.hasUserWithId(userId)) {
             throw UnknownUserException()
         }
-    }
-
-    fun deleteSong(userId: String, songId: String): String {
-        TODO("not implemented")
     }
 }

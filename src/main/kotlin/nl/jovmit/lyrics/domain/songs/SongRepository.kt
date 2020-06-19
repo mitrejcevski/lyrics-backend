@@ -28,4 +28,8 @@ class SongRepository {
             songs[index] = updatedSong
         }
     }
+
+    fun delete(song: Song) {
+        TODO("not implemented")
+    }
 }
