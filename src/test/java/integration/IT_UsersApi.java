@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.*;
 
 public class IT_UsersApi {
 
+    private static final IT_SongData BEAUTIFUL_BY_AKON_WRONG = new IT_SongData("Be", "Ak", "Be...");
     private static final IT_SongData BEAUTIFUL_BY_AKON = new IT_SongData("Beautiful", "Akon", "Beautiful song lyrics...");
     private static final IT_SongData YEAH_BY_USHER = new IT_SongData("Yeah yeah", "Usher", "Yeah yeah song lyrics...");
     private static final IT_SongData ALWAYS_BY_BON_JOVI = new IT_SongData("Always", "Bon Jovi", "Always song lyrics...");
@@ -35,13 +36,30 @@ public class IT_UsersApi {
     public void create_a_song() {
         given()
                 .body(withJsonContainingSongData(BEAUTIFUL_BY_AKON))
-                .when()
+        .when()
                 .post(BASE_URL + "/users/" + USER_ID + "/songs")
-                .then()
+        .then()
                 .statusCode(201)
                 .contentType("application/json")
                 .body("userId", is(USER_ID))
                 .body("songId", matchesPattern(UUID_PATTERN))
+                .body("songTitle", is(BEAUTIFUL_BY_AKON.title()))
+                .body("songPerformer", is(BEAUTIFUL_BY_AKON.performer()))
+                .body("songLyrics", is(BEAUTIFUL_BY_AKON.lyrics()));
+    }
+
+    @Test
+    public void edit_a_song() {
+        String songId = createSong(USER_ID, BEAUTIFUL_BY_AKON_WRONG);
+        given()
+                .body(withJsonContainingSongData(BEAUTIFUL_BY_AKON))
+        .when()
+                .put(BASE_URL + "/users/" + USER_ID + "/songs/" + songId)
+        .then()
+                .statusCode(202)
+                .contentType("application/json")
+                .body("userId", is(USER_ID))
+                .body("songId", is(songId))
                 .body("songTitle", is(BEAUTIFUL_BY_AKON.title()))
                 .body("songPerformer", is(BEAUTIFUL_BY_AKON.performer()))
                 .body("songLyrics", is(BEAUTIFUL_BY_AKON.lyrics()));
@@ -60,7 +78,7 @@ public class IT_UsersApi {
                 .post(BASE_URL + "/users/" + GUEST_ID + "/songs");
         given()
                 .get(BASE_URL + "/users/" + USER_ID + "/songs")
-                .then()
+        .then()
                 .statusCode(200)
                 .contentType("application/json")
                 .body("songs", hasSize(2))
@@ -85,6 +103,17 @@ public class IT_UsersApi {
                 .add("password", password)
                 .add("about", about)
                 .toString();
+    }
+
+    private String createSong(String userId, IT_SongData songData) {
+        RequestSpecification request = given().body(withJsonContainingSongData(BEAUTIFUL_BY_AKON_WRONG));
+        Response response = request.post(BASE_URL + "/users/" + userId + "/songs");
+        return response.statusCode() < 400 ? songIdFrom(response.body().asString()) : "";
+    }
+
+    private String songIdFrom(String json) {
+        JsonObject jsonObject = JsonObject.readFrom(json);
+        return jsonObject.get("songId").asString();
     }
 
     private String register(String username, String password, String about) {
