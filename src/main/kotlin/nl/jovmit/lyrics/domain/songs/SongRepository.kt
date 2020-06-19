@@ -30,6 +30,9 @@ class SongRepository {
     }
 
     fun delete(song: Song) {
-        TODO("not implemented")
+        val index = songs.indexOf(song)
+        if (index != -1) {
+            songs.removeAt(index)
+        }
     }
 }

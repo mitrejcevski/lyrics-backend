@@ -3,7 +3,6 @@ package nl.jovmit.lyrics.domain.songs
 import nl.jovmit.lyrics.infrastructure.builder.SongBuilder.Companion.aSong
 import nl.jovmit.lyrics.infrastructure.builder.UserBuilder.Companion.aUser
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class SongRepositoryShould {
@@ -47,5 +46,16 @@ class SongRepositoryShould {
         val result = songRepository.getSong(tom.id, tomSongOne.songId).get()
 
         assertThat(result).isEqualTo(tomSongOneUpdated)
+    }
+
+    @Test
+    fun delete_song() {
+        songRepository.add(tomSongOne)
+        songRepository.add(tomSongTwo)
+
+        songRepository.delete(tomSongOne)
+
+        assertThat(songRepository.getSong(tom.id, tomSongOne.songId)).isEmpty()
+        assertThat(songRepository.getSong(tom.id, tomSongTwo.songId)).isPresent()
     }
 }
