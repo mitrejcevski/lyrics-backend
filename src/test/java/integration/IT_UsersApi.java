@@ -100,6 +100,30 @@ public class IT_UsersApi {
                 .body("songLyrics", containsInAnyOrder(BEAUTIFUL_BY_AKON.lyrics(), YEAH_BY_USHER.lyrics()));
     }
 
+    @Test
+    public void return_songs_matching_search_keyword() {
+        given()
+                .body(withJsonContainingSongData(BEAUTIFUL_BY_AKON))
+                .post(BASE_URL + "/users/" + USER_ID + "/songs");
+        given()
+                .body(withJsonContainingSongData(YEAH_BY_USHER))
+                .post(BASE_URL + "/users/" + USER_ID + "/songs");
+        given()
+                .body(withJsonContainingSongData(ALWAYS_BY_BON_JOVI))
+                .post(BASE_URL + "/users/" + USER_ID + "/songs");
+        given()
+                .get(BASE_URL + "/users/" + USER_ID + "/songs/search/" + ALWAYS_BY_BON_JOVI.title())
+        .then()
+                .statusCode(200)
+                .contentType("application/json")
+                .body("songs", hasSize(1))
+                .body("userId", everyItem(is(USER_ID)))
+                .body("songId", everyItem(matchesPattern(UUID_PATTERN)))
+                .body("songTitle", containsInAnyOrder(ALWAYS_BY_BON_JOVI.title()))
+                .body("songPerformer", containsInAnyOrder(ALWAYS_BY_BON_JOVI.performer()))
+                .body("songLyrics", containsInAnyOrder(ALWAYS_BY_BON_JOVI.lyrics()));
+    }
+
     private String withJsonContainingSongData(IT_SongData songData) {
         return new JsonObject()
                 .add("songTitle", songData.title())
