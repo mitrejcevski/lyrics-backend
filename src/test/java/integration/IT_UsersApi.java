@@ -124,6 +124,21 @@ public class IT_UsersApi {
                 .body("songLyrics", containsInAnyOrder(ALWAYS_BY_BON_JOVI.lyrics()));
     }
 
+    @Test
+    public void return_song_for_given_id(){
+        String songId = createSong(USER_ID, YEAH_BY_USHER);
+        given()
+                .get(BASE_URL + "/users/" + USER_ID + "/songs/" + songId)
+        .then()
+                .statusCode(200)
+                .contentType("application/json")
+                .body("userId", is(USER_ID))
+                .body("songId", matchesPattern(UUID_PATTERN))
+                .body("songTitle", is(YEAH_BY_USHER.title()))
+                .body("songPerformer", is(YEAH_BY_USHER.performer()))
+                .body("songLyrics", is(YEAH_BY_USHER.lyrics()));
+    }
+
     private String withJsonContainingSongData(IT_SongData songData) {
         return new JsonObject()
                 .add("songTitle", songData.title())
@@ -141,7 +156,7 @@ public class IT_UsersApi {
     }
 
     private String createSong(String userId, IT_SongData songData) {
-        RequestSpecification request = given().body(withJsonContainingSongData(BEAUTIFUL_BY_AKON_WRONG));
+        RequestSpecification request = given().body(withJsonContainingSongData(songData));
         Response response = request.post(BASE_URL + "/users/" + userId + "/songs");
         return response.statusCode() < 400 ? songIdFrom(response.body().asString()) : "";
     }
