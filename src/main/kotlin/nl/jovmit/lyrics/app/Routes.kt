@@ -4,7 +4,7 @@ import nl.jovmit.lyrics.api.LoginApi
 import nl.jovmit.lyrics.api.SearchApi
 import nl.jovmit.lyrics.api.UsersApi
 import nl.jovmit.lyrics.domain.search.SearchService
-import nl.jovmit.lyrics.domain.songs.SongRepository
+import nl.jovmit.lyrics.domain.songs.InMemorySongRepository
 import nl.jovmit.lyrics.domain.songs.SongService
 import nl.jovmit.lyrics.domain.songs.SongsApi
 import nl.jovmit.lyrics.domain.users.LoginService
@@ -31,7 +31,7 @@ class Routes {
         val userRepository = InMemoryUserRepository()
         val userService = UserService(idGenerator, userRepository)
         val loginService = LoginService(userRepository)
-        val songRepository = SongRepository()
+        val songRepository = InMemorySongRepository()
         val songService = SongService(idGenerator, songRepository, userRepository)
         val searchService = SearchService(songRepository, userRepository)
 
