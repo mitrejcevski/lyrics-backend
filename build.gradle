@@ -40,3 +40,10 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+test {
+    useJUnitPlatform()
+    filter {
+        excludeTestsMatching "IT_*"
+    }
+}
