@@ -11,4 +11,10 @@ data class Song(
     fun matchesIds(userId: String, songId: String): Boolean {
         return this.userId == userId && this.songId == songId
     }
+
+    fun containsKeyword(keyword: String): Boolean {
+        return title.contains(keyword, ignoreCase = true) ||
+                performer.contains(keyword, ignoreCase = true) ||
+                lyrics.contains(keyword, ignoreCase = true)
+    }
 }
