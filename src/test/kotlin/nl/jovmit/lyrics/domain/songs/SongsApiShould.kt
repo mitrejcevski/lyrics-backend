@@ -203,6 +203,43 @@ class SongsApiShould {
         assertThat(result).isEqualTo("The user does not exist.")
     }
 
+    @Test
+    fun return_song_for_given_id() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(songsService.songFor(userId, songId)).willReturn(song)
+
+        val result = songsApi.songById(request, response)
+
+        verify(response).type("application/json")
+        verify(response).status(200)
+        assertThat(result).isEqualTo(jsonContaining(song))
+    }
+
+    @Test
+    fun return_error_when_unknown_user_requests_a_song_by_id() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(songsService.songFor(userId, songId)).willThrow(UnknownUserException::class.java)
+
+        val result = songsApi.songById(request, response)
+
+        verify(response).status(400)
+        assertThat(result).isEqualTo("The user does not exist.")
+    }
+
+    @Test
+    fun return_error_when_requested_song_does_not_exist() {
+        willReturn(userId).given(request).params("userId")
+        willReturn(songId).given(request).params("songId")
+        given(songsService.songFor(userId, songId)).willThrow(UnknownSongException::class.java)
+
+        val result = songsApi.songById(request, response)
+
+        verify(response).status(400)
+        assertThat(result).isEqualTo("The song does not exist.")
+    }
+
     private fun jsonContaining(songId: String): String {
         return JsonObject()
             .add("songId", songId)

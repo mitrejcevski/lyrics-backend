@@ -47,6 +47,7 @@ class Routes {
         post("login") { request, response -> loginApi.login(request, response) }
         post("users/:userId/songs") { request, response -> songsApi.createSong(request, response) }
         get("users/:userId/songs") { request, response -> songsApi.songsByUser(request, response) }
+        get("users/:userId/songs/:songId") { request, response -> songsApi.songById(request, response) }
         put("users/:userId/songs/:songId") { request, response -> songsApi.editSong(request, response) }
         delete("users/:userId/songs/:songId") { request, response -> songsApi.deleteSong(request, response) }
         get("users/:userId/songs/search/:keyword") { request, response -> searchApi.searchSong(request, response) }

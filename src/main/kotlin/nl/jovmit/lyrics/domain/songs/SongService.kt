@@ -50,4 +50,8 @@ class SongService(
             throw UnknownUserException()
         }
     }
+
+    fun songFor(userId: String, songId: String): Song {
+        TODO("not implemented")
+    }
 }

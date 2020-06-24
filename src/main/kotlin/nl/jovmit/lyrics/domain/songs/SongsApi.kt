@@ -36,6 +36,21 @@ class SongsApi(
         }
     }
 
+    fun songById(request: Request, response: Response): String {
+        val userId = request.params("userId")
+        val songId = request.params("songId")
+        return try {
+            val song = songService.songFor(userId, songId)
+            response.status(OK_200)
+            response.type("application/json")
+            jsonFor(song)
+        } catch (unknownUserException: UnknownUserException) {
+            prepareUnknownUserError(response)
+        } catch (unknownSongException: UnknownSongException) {
+            prepareUnknownSongError(response)
+        }
+    }
+
     fun editSong(request: Request, response: Response): String {
         val userId = request.params("userId")
         val songId = request.params("songId")
