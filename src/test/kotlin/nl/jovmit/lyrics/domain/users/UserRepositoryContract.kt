@@ -1,22 +1,20 @@
 package nl.jovmit.lyrics.domain.users
 
-import nl.jovmit.lyrics.infrastructure.builder.UserBuilder.Companion.aUser
+import nl.jovmit.lyrics.infrastructure.builder.UserBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class UserRepositoryShould {
+abstract class UserRepositoryContract {
 
-    private val mile = aUser().withUsername("mile").build()
-    private val tom = aUser().withUsername("tom").build()
+    private val mile = UserBuilder.aUser().withUsername("mile").build()
+    private val tom = UserBuilder.aUser().withUsername("tom").build()
     private val tomCredentials = UserCredentials(tom.username, tom.password)
     private val incorrectMileCredentials = UserCredentials(mile.username, "wrong")
     private val unknownCredentials = UserCredentials("unknown", "unknown")
 
-    private val repository = UserRepository()
-
     @Test
     fun inform_when_username_is_taken() {
-        repository.add(tom)
+        val repository = repositoryWith(tom)
 
         assertThat(repository.isUsernameTaken(tom.username)).isTrue()
         assertThat(repository.isUsernameTaken(mile.username)).isFalse()
@@ -24,8 +22,7 @@ class UserRepositoryShould {
 
     @Test
     fun return_user_matching_valid_credentials() {
-        repository.add(tom)
-        repository.add(mile)
+        val repository = repositoryWith(tom, mile)
 
         assertThat(repository.userFor(tomCredentials)).isPresent()
         assertThat(repository.userFor(unknownCredentials)).isEmpty()
@@ -34,9 +31,11 @@ class UserRepositoryShould {
 
     @Test
     fun inform_when_contains_user_for_given_user_id() {
-        repository.add(tom)
+        val repository = repositoryWith(tom)
 
         assertThat(repository.hasUserWithId(tom.id)).isTrue()
         assertThat(repository.hasUserWithId(mile.id)).isFalse()
     }
+
+    abstract fun repositoryWith(vararg users: User): UserRepository
 }
