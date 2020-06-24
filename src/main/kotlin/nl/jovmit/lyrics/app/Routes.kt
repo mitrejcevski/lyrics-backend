@@ -1,7 +1,9 @@
 package nl.jovmit.lyrics.app
 
 import nl.jovmit.lyrics.api.LoginApi
+import nl.jovmit.lyrics.api.SearchApi
 import nl.jovmit.lyrics.api.UsersApi
+import nl.jovmit.lyrics.domain.search.SearchService
 import nl.jovmit.lyrics.domain.songs.SongRepository
 import nl.jovmit.lyrics.domain.songs.SongService
 import nl.jovmit.lyrics.domain.songs.SongsApi
@@ -16,6 +18,7 @@ class Routes {
     private lateinit var loginApi: LoginApi
     private lateinit var usersApi: UsersApi
     private lateinit var songsApi: SongsApi
+    private lateinit var searchApi: SearchApi
 
     fun create() {
         createApis()
@@ -30,10 +33,12 @@ class Routes {
         val loginService = LoginService(userRepository)
         val songRepository = SongRepository()
         val songService = SongService(idGenerator, songRepository, userRepository)
+        val searchService = SearchService()
 
         usersApi = UsersApi(userService)
         loginApi = LoginApi(loginService)
         songsApi = SongsApi(songService)
+        searchApi = SearchApi(searchService)
     }
 
     private fun openLyricsRoutes() {
@@ -44,5 +49,6 @@ class Routes {
         get("users/:userId/songs") { request, response -> songsApi.songsByUser(request, response) }
         put("users/:userId/songs/:songId") { request, response -> songsApi.editSong(request, response) }
         delete("users/:userId/songs/:songId") { request, response -> songsApi.deleteSong(request, response) }
+        get("users/:userId/songs/search/:keyword") { request, response -> searchApi.searchSong(request, response) }
     }
 }
