@@ -23,6 +23,15 @@ class SongService(
         return songRepository.songsFor(userId)
     }
 
+    fun songFor(userId: String, songId: String): Song {
+        validate(userId)
+        val song = songRepository.getSong(userId, songId)
+        if (song.isPresent) {
+            return song.get()
+        }
+        throw UnknownSongException()
+    }
+
     fun editSong(userId: String, songId: String, songData: SongData): Song {
         validate(userId)
         val song = songRepository.getSong(userId, songId)
@@ -49,9 +58,5 @@ class SongService(
         if (!userRepository.hasUserWithId(userId)) {
             throw UnknownUserException()
         }
-    }
-
-    fun songFor(userId: String, songId: String): Song {
-        TODO("not implemented")
     }
 }

@@ -136,4 +136,31 @@ class SongServiceShould {
             songService.deleteSong(userId, songId)
         }
     }
+
+    @Test
+    fun return_a_song_for_given_id() {
+        given(songRepository.getSong(userId, songId)).willReturn(Optional.of(song))
+
+        val result = songService.songFor(userId, songId)
+
+        assertThat(result).isEqualTo(song)
+    }
+
+    @Test
+    fun throw_exception_when_unknown_user_tries_to_get_song_by_id() {
+        given(userRepository.hasUserWithId(userId)).willReturn(false)
+
+        assertThrows<UnknownUserException> {
+            songService.songFor(userId, songId)
+        }
+    }
+
+    @Test
+    fun throw_exception_when_trying_to_get_a_non_existing_song() {
+        given(songRepository.getSong(userId, songId)).willReturn(Optional.empty())
+
+        assertThrows<UnknownSongException> {
+            songService.songFor(userId, songId)
+        }
+    }
 }
