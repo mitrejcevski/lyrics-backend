@@ -8,7 +8,7 @@ import nl.jovmit.lyrics.domain.songs.SongRepository
 import nl.jovmit.lyrics.domain.songs.SongService
 import nl.jovmit.lyrics.domain.songs.SongsApi
 import nl.jovmit.lyrics.domain.users.LoginService
-import nl.jovmit.lyrics.domain.users.UserRepository
+import nl.jovmit.lyrics.domain.users.InMemoryUserRepository
 import nl.jovmit.lyrics.domain.users.UserService
 import nl.jovmit.lyrics.infrastructure.utils.IdGenerator
 import spark.Spark.*
@@ -28,7 +28,7 @@ class Routes {
     private fun createApis() {
         val idGenerator = IdGenerator()
 
-        val userRepository = UserRepository()
+        val userRepository = InMemoryUserRepository()
         val userService = UserService(idGenerator, userRepository)
         val loginService = LoginService(userRepository)
         val songRepository = SongRepository()
