@@ -17,9 +17,9 @@ class LyricsApp {
     private val logger: Logger = LoggerFactory.getLogger(LyricsApp::class.java)
     private val routes = Routes()
 
-    fun start(isProduction: Boolean = false) {
+    fun start(port: Int = 4321, isProduction: Boolean = false) {
         logger.info("Starting app: configuration = " + if (isProduction) "production" else "in memory")
-        port(8080)
+        port(port)
         enableCORS()
         setLog()
         routes.create(isProduction)

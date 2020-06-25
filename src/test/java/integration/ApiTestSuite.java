@@ -14,7 +14,8 @@ import org.junit.runners.Suite;
 })
 public class ApiTestSuite {
 
-    static final String BASE_URL = "http://localhost:8080";
+    static final int PORT = 4321;
+    static final String BASE_URL = "http://localhost:" + PORT;
     static final String UUID_PATTERN = "([a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8})";
 
     private static LyricsApp app;
@@ -22,7 +23,7 @@ public class ApiTestSuite {
     @BeforeClass
     public static void setUp() {
         app = new LyricsApp();
-        app.start(false);
+        app.start(PORT, false);
         app.awaitInitialization();
     }
 
