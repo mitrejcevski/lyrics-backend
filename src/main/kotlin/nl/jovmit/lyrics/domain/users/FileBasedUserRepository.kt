@@ -2,15 +2,12 @@ package nl.jovmit.lyrics.domain.users
 
 import com.eclipsesource.json.JsonArray
 import com.eclipsesource.json.JsonObject
+import nl.jovmit.lyrics.infrastructure.utils.Directories.USERS_DIR
+import nl.jovmit.lyrics.infrastructure.utils.Directories.USERS_FILE_NAME
 import java.io.File
 import java.util.*
 
 class FileBasedUserRepository : UserRepository {
-
-    private companion object {
-        private const val USERS_DIR = "files/users"
-        private const val USERS_FILE_NAME = "users"
-    }
 
     private val usersRoot: File = File(USERS_DIR).also { it.mkdirs() }
 
