@@ -22,7 +22,7 @@ public class ApiTestSuite {
     @BeforeClass
     public static void setUp() {
         app = new LyricsApp();
-        app.start();
+        app.start(false);
         app.awaitInitialization();
     }
 
