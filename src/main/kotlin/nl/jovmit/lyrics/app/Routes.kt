@@ -4,11 +4,13 @@ import nl.jovmit.lyrics.api.LoginApi
 import nl.jovmit.lyrics.api.SearchApi
 import nl.jovmit.lyrics.api.UsersApi
 import nl.jovmit.lyrics.domain.search.SearchService
+import nl.jovmit.lyrics.domain.songs.FileBasedSongRepository
 import nl.jovmit.lyrics.domain.songs.InMemorySongRepository
 import nl.jovmit.lyrics.domain.songs.SongService
 import nl.jovmit.lyrics.domain.songs.SongsApi
-import nl.jovmit.lyrics.domain.users.LoginService
+import nl.jovmit.lyrics.domain.users.FileBasedUserRepository
 import nl.jovmit.lyrics.domain.users.InMemoryUserRepository
+import nl.jovmit.lyrics.domain.users.LoginService
 import nl.jovmit.lyrics.domain.users.UserService
 import nl.jovmit.lyrics.infrastructure.utils.IdGenerator
 import spark.Spark.*
@@ -20,18 +22,18 @@ class Routes {
     private lateinit var songsApi: SongsApi
     private lateinit var searchApi: SearchApi
 
-    fun create() {
-        createApis()
+    fun create(production: Boolean) {
+        createApis(production)
         openLyricsRoutes()
     }
 
-    private fun createApis() {
+    private fun createApis(production: Boolean) {
         val idGenerator = IdGenerator()
 
-        val userRepository = InMemoryUserRepository()
+        val userRepository = if (production) FileBasedUserRepository() else InMemoryUserRepository()
         val userService = UserService(idGenerator, userRepository)
         val loginService = LoginService(userRepository)
-        val songRepository = InMemorySongRepository()
+        val songRepository = if (production) FileBasedSongRepository() else InMemorySongRepository()
         val songService = SongService(idGenerator, songRepository, userRepository)
         val searchService = SearchService(songRepository, userRepository)
 
